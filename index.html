@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>COOLDOWN — Show your gear. Chase your season.</title>
+  <meta name="description" content="COOLDOWN is where athletes of every sport show off their bikes, gear and workstations, put their season goals and races in public, and get scouted by sponsors.">
+  <meta name="theme-color" content="#000000">
+  <meta name="color-scheme" content="light">
+
+  <meta property="og:title" content="COOLDOWN — Show your gear. Chase your season.">
+  <meta property="og:description" content="Gear, goals and races for every athlete. Cool down here. Get seen by the brands that matter.">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary">
+
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=Instrument+Serif:ital@1&family=JetBrains+Mono:wght@500;700&family=Unbounded:wght@700;900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="gnav" id="gnav">
+    <div class="gnav-in">
+      <a class="logo" href="#/" aria-label="COOLDOWN home"><span class="logo-word">COOLDOWN</span><span class="logo-dot" aria-hidden="true"></span></a>
+      <nav class="gnav-links" aria-label="Main">
+        <a href="#/" data-view="home">Home</a>
+        <a href="#/rigs" data-view="rigs">Rigs</a>
+        <a href="#/athletes" data-view="athletes">Athletes</a>
+        <a href="#/scout" data-view="scout">Scout</a>
+        <a href="#/journal" data-view="journal">Journal</a>
+      </nav>
+      <div class="gnav-actions">
+        <button class="icon-btn ghost" id="searchBtn" type="button" aria-label="Search (Command K)">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+        </button>
+        <button class="pill pill-pop pill-sm" id="newBtn" type="button">＋ Post</button>
+        <button class="me-btn" id="meBtn" type="button" aria-label="Your profile"></button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main" tabindex="-1"></main>
+
+  <nav class="tabbar" aria-label="Main (mobile)">
+    <a href="#/" data-view="home"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Home</a>
+    <a href="#/rigs" data-view="rigs"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="16" r="4"/><circle cx="18" cy="16" r="4"/><path d="M6 16l5-8h5l2 8M11 8l2 8"/></svg>Rigs</a>
+    <button type="button" class="tab-new" id="tabNew" aria-label="New post">＋</button>
+    <a href="#/athletes" data-view="athletes"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg>Athletes</a>
+    <a href="#/journal" data-view="journal"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h11l3 3v13H5zM9 10h6M9 14h6"/></svg>Journal</a>
+  </nav>
+
+  <div id="layer"></div>
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <noscript><div class="noscript">COOLDOWN needs JavaScript turned on.</div></noscript>
+
+  <script src="js/data.js" defer></script>
+  <script src="js/art.js" defer></script>
+  <script src="js/app.js" defer></script>
+</body>
+</html>

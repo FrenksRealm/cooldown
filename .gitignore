@@ -1,0 +1,17 @@
+# macOS
+.DS_Store
+
+# Netlify CLI link (keeps your site ID out of the public repo)
+.netlify/
+
+# Local env files — never commit secrets
+.env
+.env.*
+
+# Editors
+.vscode/
+.idea/
+*.swp
+
+# Dependencies (if ever added)
+node_modules/
