@@ -12,7 +12,7 @@ COOLDOWN is a home for athletes of every sport (cyclists, runners, skiers, lifte
 
 | Page | What you can do |
 | --- | --- |
-| **Home** | A scroll-driven story: a bike draws itself as you scroll, then the page walks through the bike of the week (zoom into each part, try colorways), the most-liked rigs, a live leaderboard, season goals, every sport, the biggest races ahead, the feed, a brand-side comparison and ways to get started. |
+| **Home** | A scroll-driven story: a fast montage of athletes (cycling, swimming, snowboarding, running, climbing, hiking) plays behind the headlines, a water drop falls and COOLDOWN spins a full 360 into place (drag it to spin it again). Then the bike of the week (zoom into each part, try colorways), the most-liked rigs, a live leaderboard, season goals, every sport, the biggest races ahead, the feed, a brand-side comparison and ways to get started. |
 | **Rigs** | Browse bikes, quivers, shoe rotations and workstations by sport and type. Like, comment and read the full build sheet. Post your own with a photo. |
 | **Athletes** | Search and follow people. Every profile shows season goals with progress, upcoming races, links (Strava, Instagram, Spotify, YouTube, TikTok), rigs, stories and a sponsor pitch. |
 | **Scout** | Built for brands: rank athletes by fans, engagement, rig likes, 12-week growth and a transparent **traction score**. Shortlist and compare up to three side by side. |
@@ -22,10 +22,11 @@ Also: ⌘K search for everything, keyboard shortcuts (1–5, N, /, Esc), and a g
 
 ## Design
 
-- **Apple-style scrolling.** Pages scroll vertically. The home hero is scrubbed by scroll, and sections fade up, numbers count up and bars grow as they come into view.
+- **Apple-style scrolling.** Pages scroll vertically. The home hero is scrubbed by scroll. Sections fade up, numbers count up, bars grow and rings fill as they come into view, and they all run back to zero as you scroll back up.
 - **Sideways only where it helps.** Rig and race galleries, the section nav and the Scout table swipe sideways inside their own lane. The page itself never scrolls sideways.
-- **Black, white, and a little green.** White and black sections, with lime-to-cyan as the accent.
-- **Type:** Inter Tight for headlines and body, Instrument Serif italics for personality, JetBrains Mono for labels, Unbounded for the wordmark.
+- **Black and white, with cool blue and light green.** Solid colors only, no gradient fades.
+- **Type:** one family, Inter Tight, for everything.
+- **Logo:** the COOLDOWN wordmark with a water drop. Each letter flips 360 on hover; the browser tab icon is the drop.
 - **Accessible motion.** Everything still works, without the animation, for people who turn on Reduce Motion.
 
 ## How traction is scored
@@ -47,6 +48,7 @@ css/styles.css    all styles, including the responsive layouts
 js/data.js        demo athletes, rigs, races and stories (all fictional)
 js/art.js         line-art illustrations (inline SVG), including the scroll-drawn bike
 js/app.js         pages, scroll animations, galleries, posting, search
+assets/video/     hero montage (free Mixkit clips, trimmed and joined)
 netlify.toml      hosting config + security headers
 ```
 
@@ -76,4 +78,4 @@ Every push to `main` deploys automatically to Netlify.
 
 ---
 
-© 2026 Frenk Alas Samayoa. All rights reserved. The demo athletes, events and brands are fictional.
+© 2026 Frenk Alas Samayoa. All rights reserved. The demo athletes, events and brands are fictional. Hero footage from Mixkit (mixkit.co), used under the Mixkit Stock Video Free License.

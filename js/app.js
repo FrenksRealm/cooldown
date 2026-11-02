@@ -5,8 +5,10 @@
    races, profile) is saved in their browser under one localStorage key.
 
    Pages scroll vertically like an Apple product page:
-   - the home hero is "scrubbed" by scroll (bike draws itself, glow blooms)
-   - sections reveal, numbers count up and bars grow as they enter view
+   - the home hero is "scrubbed" by scroll (athlete montage, a falling
+     drop, COOLDOWN spinning 360; drag the word to spin it again)
+   - sections reveal, numbers count up and bars grow as they enter view,
+     and run back to zero when you scroll back up
    - a few galleries swipe sideways inside their own lane
    ========================================================================= */
 (function () {
@@ -178,11 +180,9 @@
     const last = pts[pts.length - 1];
     return `<svg class="spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-hidden="true"><polyline points="${d}" fill="none" stroke="${stroke || '#00C46A'}" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/><circle cx="${last[0].toFixed(1)}" cy="${last[1].toFixed(1)}" r="3" fill="${stroke || '#00C46A'}"/></svg>`;
   }
-  let ringN = 0;
   function ring(pct, size) {
-    const id = 'rg' + (++ringN);
     const r = (size - 10) / 2, c = 2 * Math.PI * r;
-    return `<svg class="ring" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" aria-hidden="true"><defs><linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#C6FF3D"/><stop offset=".5" stop-color="#00E0A4"/><stop offset="1" stop-color="#3DD6FF"/></linearGradient></defs><circle class="bgc" cx="${size / 2}" cy="${size / 2}" r="${r}"/><circle class="fg" stroke="url(#${id})" cx="${size / 2}" cy="${size / 2}" r="${r}" stroke-dasharray="${c.toFixed(1)}" stroke-dashoffset="${c.toFixed(1)}" data-off="${(c * (1 - pct)).toFixed(1)}"/></svg>`;
+    return `<svg class="ring" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" aria-hidden="true"><circle class="bgc" cx="${size / 2}" cy="${size / 2}" r="${r}"/><circle class="fg" stroke="#7FB5FF" cx="${size / 2}" cy="${size / 2}" r="${r}" stroke-dasharray="${c.toFixed(1)}" stroke-dashoffset="${c.toFixed(1)}" data-off="${(c * (1 - pct)).toFixed(1)}"/></svg>`;
   }
   function cdInner(t) {
     let s = Math.max(0, Math.floor((t - Date.now()) / 1000));
@@ -204,7 +204,7 @@
     ['spotify', 'Spotify', '#1DB954', (v) => safeUrl(v)],
     ['youtube', 'YouTube', '#FF0000', (v) => safeUrl(v)],
     ['tiktok', 'TikTok', '#ffffff', (v) => v ? 'https://www.tiktok.com/@' + encodeURIComponent(cleanHandle(v)) : ''],
-    ['website', 'Website', '#C6FF3D', (v) => safeUrl(v)]
+    ['website', 'Website', '#2E7BFF', (v) => safeUrl(v)]
   ];
   function socialLinks(a) {
     const s = a.socials || {};
@@ -242,17 +242,60 @@
     const step = (t) => { const k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 4); el.textContent = countFmt(kind, end * e); if (k < 1) requestAnimationFrame(step); else el.textContent = countFmt(kind, end); };
     requestAnimationFrame(step);
   }
+  /* Metrics follow the scroll both ways: numbers count up, bars grow and
+     rings fill as they move up the screen, and go back to zero as you
+     scroll back up past them. Reveals (.rv) also fade back out below the fold. */
+  const easeOut = (k) => 1 - Math.pow(1 - k, 3);
+  function setMetric(el, e) {
+    if (el.dataset.count != null) { const end = Number(el.dataset.count); if (isFinite(end)) el.textContent = countFmt(el.dataset.fmt || 'int', end * e); }
+    if (el.dataset.bar != null) el.style.width = (Number(el.dataset.bar) * e).toFixed(2) + '%';
+    if (el.dataset.off != null) { const c = Number(el.getAttribute('stroke-dasharray')), off = Number(el.dataset.off); el.style.strokeDashoffset = (c - (c - off) * e).toFixed(1); }
+  }
   function activate(el) {
     el.classList.add('in');
-    if (el.dataset.count != null) countUp(el);
-    if (el.dataset.bar != null) el.style.width = el.dataset.bar + '%';
-    if (el.dataset.off != null) el.style.strokeDashoffset = el.dataset.off;
+    if (el.dataset.count != null && !reduceMotion) countUp(el);
+    else setMetric(el, 1);
+  }
+  const tracked = new Set();
+  function metricScrub() {
+    if (!tracked.size) return;
+    const vh = window.innerHeight;
+    tracked.forEach((el) => {
+      if (!el.isConnected) { tracked.delete(el); return; }
+      const r = el.getBoundingClientRect();
+      if (!r.width && !r.height) return;
+      if (el.classList.contains('rv') || el.classList.contains('rv-scale')) {
+        if (r.top < vh * 0.9) el.classList.add('in');
+        else if (r.top > vh * 1.02) el.classList.remove('in');
+      }
+      if (el.dataset.count != null || el.dataset.bar != null || el.dataset.off != null) {
+        const k = clamp((vh * 1.0 - r.top) / (vh * 0.28), 0, 1);
+        const e = k > 0.995 ? 1 : easeOut(k);
+        if (el._e !== e) { el._e = e; setMetric(el, e); }
+      }
+    });
+  }
+  // reveals slide while they fade, so keep measuring briefly after scrolling stops
+  let settleEnd = 0, settleRaf = 0;
+  function settleMetrics() {
+    settleEnd = performance.now() + 1000;
+    if (settleRaf) return;
+    const loop = (t) => { metricScrub(); settleRaf = t < settleEnd ? requestAnimationFrame(loop) : 0; };
+    settleRaf = requestAnimationFrame(loop);
   }
   function enhance(root) {
     const els = $$('.rv,.rv-scale,[data-count],[data-bar],.ring .fg', root).filter((el) => !el.dataset.manual);
-    if (reduceMotion || !('IntersectionObserver' in window)) { els.forEach(activate); return; }
-    if (!io) io = new IntersectionObserver((entries) => entries.forEach((e) => { if (e.isIntersecting) { activate(e.target); io.unobserve(e.target); } }), { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
-    els.forEach((el) => io.observe(el));
+    if (reduceMotion) { els.forEach((el) => { el.classList.add('in'); setMetric(el, 1); }); return; }
+    const inLayer = root.closest && root.closest('#layer');
+    if (inLayer || !('IntersectionObserver' in window)) {
+      // pop-ups don't scroll with the page, so they animate once when opened
+      if (!('IntersectionObserver' in window)) { els.forEach((el) => { el.classList.add('in'); setMetric(el, 1); }); return; }
+      if (!io) io = new IntersectionObserver((entries) => entries.forEach((e) => { if (e.isIntersecting) { activate(e.target); io.unobserve(e.target); } }), { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+      els.forEach((el) => io.observe(el));
+      return;
+    }
+    els.forEach((el) => { el.classList.add('scrubbed'); tracked.add(el); });
+    settleMetrics();
   }
 
   /* ------------------------------------------------------- scroll engine */
@@ -261,7 +304,7 @@
   function onScroll() {
     if (ticking) return;
     ticking = true;
-    requestAnimationFrame(() => { ticking = false; scrubs.forEach((f) => f()); });
+    requestAnimationFrame(() => { ticking = false; scrubs.forEach((f) => f()); metricScrub(); settleMetrics(); });
   }
   window.addEventListener('scroll', onScroll, { passive: true });
   const navH = () => ($('#gnav') ? $('#gnav').offsetHeight : 52);
@@ -340,6 +383,7 @@
     curView = view; curArg = arg || null;
     scrubs.length = 0;
     if (io) { io.disconnect(); io = null; }
+    tracked.clear();
     main.innerHTML = VIEWS[view](arg) + footer();
     curHash = view === 'home' ? '#/' : view === 'athlete' ? '#/athlete/' + encodeURIComponent(arg) : view === 'article' ? '#/journal/' + encodeURIComponent(arg) : '#/' + view;
     const t = view === 'athlete' ? (athlete(arg) || {}).name : view === 'article' ? (post(arg) || {}).title : TITLE_OF[view];
@@ -361,7 +405,7 @@
 
   function footer() {
     return `<footer class="foot"><div class="wrap foot-in">
-      <a class="logo" href="#/" aria-label="${BRAND} home"><span class="logo-word">${BRAND}</span><span class="logo-dot" aria-hidden="true"></span></a>
+      <a class="logo" href="#/" aria-label="${BRAND} home">${logoHTML()}</a>
       <nav aria-label="Footer"><a href="#/rigs">Rigs</a><a href="#/athletes">Athletes</a><a href="#/scout">Scout</a><a href="#/journal">Journal</a><button type="button" data-act="about">About</button></nav>
       <p>Early demo. The athletes, races and brands shown here are fictional. Everything you post stays in your browser for now. © 2026 ${BRAND}.</p>
     </div></footer>`;
@@ -383,22 +427,37 @@
   const acc = (q, a) => `<div class="acc"><button type="button" data-acc aria-expanded="false">${esc(q)}</button><div class="acc-body"><div>${a}</div></div></div>`;
   const gcard = (icon, title, text, act, tab, cta) => `<button type="button" class="gcard rv" data-act="${act}" ${tab ? `data-tab="${tab}"` : ''}><span class="gi">${icon}</span><b>${title}</b><p>${text}</p><span class="link">${cta}</span></button>`;
 
+  const DROP = (cls) => `<svg class="${cls}" viewBox="0 0 24 32" aria-hidden="true"><path d="M12 1.5C12 1.5 3 13.2 3 20.3a9 9 0 0 0 18 0C21 13.2 12 1.5 12 1.5Z"/><ellipse class="hl" cx="8.3" cy="20.6" rx="2.1" ry="3.4" transform="rotate(-18 8.3 20.6)"/></svg>`;
+  const logoHTML = () => `<span class="logo-word">${[...BRAND].map((c, i) => `<i style="--i:${i}">${c}</i>`).join('')}</span>${DROP('logo-drop')}`;
+  const CD3D_DEPTH = 14;
+  function cd3dLayers() {
+    let h = `<span class="cd3d-l front" style="--z:0">${BRAND}</span>`;
+    for (let z = 1; z <= CD3D_DEPTH; z++) h += `<span class="cd3d-l${z === CD3D_DEPTH ? ' back' : ''}" style="--z:${z}" aria-hidden="true">${BRAND}</span>`;
+    return h;
+  }
+
   function viewHome() {
     const b = bikeOfWeek();
     const ba = b ? athlete(b.athleteId) : null;
     return `
     <section class="hero" id="hero" aria-label="Intro">
       <div class="hero-stick" id="heroStick">
-        <div class="hero-grid"></div><div class="hero-glow"></div>
-        <div class="hero-bike">${BIKE('road', 'hero-svg', 0.6)}</div>
+        <div class="hero-media" aria-hidden="true">
+          <video class="hero-video" id="heroVideo" src="assets/video/montage.mp4" poster="assets/video/montage-poster.jpg" muted loop playsinline preload="auto"${reduceMotion ? '' : ' autoplay'}></video>
+          <div class="hero-shade"></div>
+        </div>
         <div class="hero-copy">
-          <div class="hero-line" data-l="0"><span class="eyebrow">For athletes of every sport</span><h1 class="h-hero">Show your <span class="serif">gear.</span></h1></div>
-          <div class="hero-line" data-l="1"><h2 class="h-hero">Chase your <span class="serif">season.</span></h2></div>
+          <div class="hero-line" data-l="0"><div class="hero-kicker">For athletes of <span class="kick-hl">every sport</span></div><h1 class="h-hero">Show your gear.</h1></div>
+          <div class="hero-line" data-l="1"><h2 class="h-hero">Chase your season.</h2></div>
           <div class="hero-line hero-end" data-l="2">
-            <h2 class="h-hero">Then, <span class="glow-text">cool down.</span></h2>
-            <p class="lede">The place athletes come after the work. Show off the bike, the quiver, the shoe rotation and the home shop. Post your goals and races. Get seen by the brands watching. Every sport, one place.</p>
-            <div class="hero-ctas"><button type="button" class="pill pill-pop" data-act="claimOrProfile">${claimed() ? 'View your profile' : 'Claim your profile'}</button><button type="button" class="pill pill-line on-dark" data-jump="s-liked">See what's hot</button></div>
-            <div class="hero-stats"><div><b data-count="${athletes().length}" data-manual="1">0</b><span>Athletes</span></div><div><b data-count="${rigs().length}" data-manual="1">0</b><span>Rigs</span></div><div><b data-count="${races().length}" data-manual="1">0</b><span>Races</span></div></div>
+            <div class="hero-drop" aria-hidden="true">${DROP('drop-svg')}<i class="hero-ripple"></i><i class="hero-ripple r2"></i></div>
+            <h2 class="cd3d" id="cd3d" tabindex="0" aria-label="${BRAND}"><span class="cd3d-rot" id="cd3dRot">${cd3dLayers()}</span></h2>
+            <div class="cd3d-hint" aria-hidden="true">Drag to spin</div>
+            <div class="hero-rest">
+              <p class="lede">Your gear, goals and races in one profile, where brands come to find athletes.</p>
+              <div class="hero-ctas"><button type="button" class="pill pill-pop" data-act="claimOrProfile">${claimed() ? 'View your profile' : 'Claim your profile'}</button><button type="button" class="pill pill-line on-dark" data-jump="s-liked">See what's hot</button></div>
+              <div class="hero-stats"><div><b data-count="${athletes().length}" data-manual="1">0</b><span>Athletes</span></div><div><b data-count="${rigs().length}" data-manual="1">0</b><span>Rigs</span></div><div><b data-count="${races().length}" data-manual="1">0</b><span>Races</span></div></div>
+            </div>
           </div>
         </div>
         <div class="scroll-cue" aria-hidden="true"><i></i>SCROLL</div>
@@ -542,8 +601,7 @@
       <div class="lb-main"><div class="lb-name"><b>${esc(a.name)}${a.isMe ? ' <span class="tag pop">You</span>' : ''}</b><span>${esc(a.sport)}${a.city ? ' · ' + esc(a.city) : ''}</span></div><div class="lb-track"><i data-bar="${(Math.max(val(a), 0) / max * 100).toFixed(1)}"></i></div></div>
       <span class="lb-val" data-count="${Math.max(val(a), 0).toFixed(2)}" data-fmt="${fmt}">0</span>
     </div>`).join('');
-    if (animate) requestAnimationFrame(() => requestAnimationFrame(() => $$('.rv,[data-bar],[data-count]', el).forEach(activate)));
-    else enhance(el);
+    enhance(el);
   }
   function featuredGoals() {
     const mine = U.goals.filter((g) => goalPct(g) < 1).map((g) => Object.assign({ who: 'me' }, g));
@@ -633,42 +691,115 @@
     el.innerHTML = tile(A, B, 'A') + tile(B, A, 'B');
   }
 
-  /* hero scrub */
+  /* hero scrub: montage -> "Show your gear." -> "Chase your season." ->
+     a drop falls, splashes, and COOLDOWN turns a full 360 into place. */
+  const spin = { user: 0, vel: 0, drag: null, raf: 0, tilt: 0 };
   function heroScrub() {
     const h = $('#hero'), st = $('#heroStick');
     if (!h || !st) return;
     const vh = st.offsetHeight;
     const total = Math.max(1, h.offsetHeight - vh);
     const p = reduceMotion ? 1 : clamp((navH() - h.getBoundingClientRect().top) / total, 0, 1);
-    const draw = clamp(p / 0.4, 0, 1);
-    const fill = clamp((p - 0.34) / 0.12, 0, 1);
-    const t = clamp((p - 0.58) / 0.3, 0, 1);
     const S = st.style;
-    S.setProperty('--draw', (1 - draw).toFixed(4));
-    S.setProperty('--po', clamp(draw * 25, 0, 1).toFixed(3));
-    S.setProperty('--fill', fill.toFixed(3));
-    S.setProperty('--knob', fill.toFixed(3));
-    S.setProperty('--spin', (p * 540).toFixed(1) + 'deg');
-    S.setProperty('--go', (clamp((p - 0.28) / 0.3, 0, 1) * 0.95).toFixed(3));
-    S.setProperty('--gs', (0.3 + 0.9 * clamp((p - 0.28) / 0.5, 0, 1)).toFixed(3));
-    S.setProperty('--gr', (0.4 + 0.35 * fill).toFixed(3));
-    S.setProperty('--bs', lerp(1.08, 0.62, t).toFixed(4));
-    S.setProperty('--by', (t * vh * 0.26).toFixed(1) + 'px');
+    const end = clamp((p - 0.5) / 0.3, 0, 1);
+    S.setProperty('--vs', lerp(1, 0.92, end).toFixed(4));
+    S.setProperty('--vr', (end * 28).toFixed(1) + 'px');
+    S.setProperty('--shade', lerp(0.38, 0.66, end).toFixed(3));
     S.setProperty('--cue', (1 - clamp(p / 0.06, 0, 1)).toFixed(3));
-    const bike = $('.hero-bike', st);
-    if (bike) bike.style.opacity = (1 - 0.62 * t).toFixed(3);
-    const segs = [[-1, 0.3], [0.3, 0.6], [0.6, 2]];
+    // drop falls (0.52 -> 0.62), splashes (0.62 -> 0.72)
+    const fall = clamp((p - 0.52) / 0.1, 0, 1);
+    const splash = clamp((p - 0.62) / 0.1, 0, 1);
+    S.setProperty('--dy', (-(1 - fall * fall) * (vh * 0.5 + 40)).toFixed(1) + 'px');
+    S.setProperty('--do', (fall > 0 && fall < 1 ? Math.min(1, fall * 6) : 0).toFixed(3));
+    S.setProperty('--rs', (0.2 + splash * 3.2).toFixed(3));
+    S.setProperty('--ro', (splash > 0 && splash < 1 ? 1 - splash : 0).toFixed(3));
+    // COOLDOWN turns 360 as it arrives (0.62 -> 0.8), then you can drag it
+    const turn = clamp((p - 0.62) / 0.18, 0, 1);
+    spin.scroll = (1 - easeOut(turn)) * 360;
+    S.setProperty('--wo', clamp((p - 0.61) / 0.04, 0, 1).toFixed(3));
+    S.setProperty('--hint', clamp((p - 0.82) / 0.05, 0, 1).toFixed(3));
+    const rest = clamp((p - 0.76) / 0.08, 0, 1);
+    S.setProperty('--ro2', rest.toFixed(3));
+    applySpin();
+    const segs = [[-1, 0.27], [0.27, 0.52], [0.52, 2]];
     $$('.hero-line', st).forEach((el, i) => {
       const [a, b] = segs[i], f = 0.07;
-      const vin = clamp((p - a) / f, 0, 1), vout = 1 - clamp((p - (b - f)) / f, 0, 1);
+      const vin = i === 2 ? (p >= a ? 1 : 0) : clamp((p - a) / f, 0, 1), vout = 1 - clamp((p - (b - f)) / f, 0, 1);
       const v = Math.min(vin, vout);
       el.style.opacity = v.toFixed(3);
-      el.style.transform = `translateY(${((p > (a + b) / 2 ? -1 : 1) * (1 - v) * 24).toFixed(1)}px)`;
-      el.style.pointerEvents = v > 0.5 ? 'auto' : 'none';
-      el.setAttribute('aria-hidden', v < 0.5 ? 'true' : 'false');
-      if (i === 2 && v > 0.6 && !el.dataset.counted) { el.dataset.counted = '1'; $$('[data-count]', el).forEach(countUp); }
+      if (i < 2) el.style.transform = `translateY(calc(-50% + ${((p > (a + b) / 2 ? -1 : 1) * (1 - v) * 24).toFixed(1)}px))`;
+      const live = i === 2 ? rest > 0.5 || turn > 0.5 : v > 0.5;
+      el.classList.toggle('live', live);
+      el.setAttribute('aria-hidden', (i === 2 ? turn < 0.5 : v < 0.5) ? 'true' : 'false');
     });
+    $$('.hero-stats [data-count]', st).forEach((el) => setMetric(el, easeOut(rest)));
+    heroVideo(p < 0.999);
   }
+  function applySpin() {
+    const r = $('#cd3dRot'); if (!r) return;
+    r.style.setProperty('--rot', ((spin.scroll || 0) + spin.user).toFixed(2) + 'deg');
+    r.style.setProperty('--tilt', spin.tilt.toFixed(2) + 'deg');
+  }
+  // after a drag (or a tap) it coasts on and settles facing front on a full turn
+  function spinTo(target) {
+    const from = spin.user, dist = target - from;
+    if (!dist) return;
+    const t0 = performance.now(), dur = clamp(Math.abs(dist) * 3.2, 500, 1500);
+    cancelAnimationFrame(spin.raf);
+    const step = (t) => {
+      if (spin.drag) { spin.raf = 0; return; }
+      const k = Math.min(1, (t - t0) / dur);
+      spin.user = from + dist * easeOut(k);
+      spin.tilt *= 0.9;
+      applySpin();
+      spin.raf = k < 1 ? requestAnimationFrame(step) : 0;
+      if (k >= 1) { spin.user = target % 360; spin.tilt = 0; applySpin(); }
+    };
+    spin.raf = requestAnimationFrame(step);
+  }
+  const settleSpin = (extra) => spinTo((Math.round((spin.user + spin.vel * 14) / 360) + (extra || 0)) * 360);
+  function wireCd3d() {
+    const w = $('#cd3d'); if (!w) return;
+    cancelAnimationFrame(spin.raf); spin.raf = 0; spin.user = 0; spin.vel = 0; spin.drag = null; spin.tilt = 0;
+    w.addEventListener('pointerdown', (e) => {
+      if (e.button !== 0) return;
+      spin.drag = { x: e.clientX, y: e.clientY, last: e.clientX, t: performance.now(), moved: false, id: e.pointerId };
+      spin.vel = 0;
+    });
+    w.addEventListener('pointermove', (e) => {
+      const d = spin.drag;
+      if (!d || d.id !== e.pointerId) {
+        if (e.pointerType === 'mouse' && !reduceMotion) { const r = w.getBoundingClientRect(); spin.tilt = clamp(((e.clientY - r.top) / r.height - 0.5) * -14, -8, 8); applySpin(); }
+        return;
+      }
+      const dx = e.clientX - d.last;
+      if (!d.moved && Math.abs(e.clientX - d.x) > 4 && Math.abs(e.clientX - d.x) > Math.abs(e.clientY - d.y)) { d.moved = true; try { w.setPointerCapture(e.pointerId); } catch (_) {} }
+      if (!d.moved) return;
+      spin.user += dx * 0.6;
+      spin.vel = spin.vel * 0.5 + dx * 0.3;
+      d.last = e.clientX;
+      applySpin();
+    });
+    const up = (e) => {
+      const d = spin.drag; if (!d || d.id !== e.pointerId) return;
+      spin.drag = null;
+      if (!d.moved && e.type === 'pointerup') { spin.vel = 0; settleSpin(1); } // a tap gives it a full turn
+      else settleSpin(0);
+    };
+    w.addEventListener('pointerup', up);
+    w.addEventListener('pointercancel', up);
+    w.addEventListener('pointerleave', () => { if (!spin.drag && !spin.raf && spin.tilt) { spin.tilt = 0; applySpin(); } });
+    w.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); spin.vel = 0; settleSpin(1); } });
+  }
+  let videoOn = null;
+  function heroVideo(on) {
+    const v = $('#heroVideo'); if (!v || reduceMotion) return;
+    if (document.hidden) on = false;
+    if (on === videoOn && !v.paused === on) return;
+    videoOn = on;
+    if (on) { const pr = v.play(); if (pr && pr.catch) pr.catch(() => {}); } else v.pause();
+  }
+  document.addEventListener('visibilitychange', () => { videoOn = null; if ($('#heroVideo')) heroScrub(); });
   function lnavScrub() {
     const nav = $('#lnav'); if (!nav) return;
     const off = navH() + nav.offsetHeight + 40;
@@ -930,7 +1061,7 @@
       <div class="rv"><div class="eyebrow">${a.openToSponsors ? 'Open to sponsorship' : 'Not looking right now'}</div><h2 class="h-sec">The <span class="glow-text">pitch.</span></h2>
         <p class="pitch-quote">${a.pitch ? '“' + esc(a.pitch) + '”' : esc(isMe ? 'Write a short pitch in Edit profile: who your audience is and what you can offer a brand.' : 'No pitch yet.')}</p>
         ${a.openToSponsors && !a.isMe ? `<button type="button" class="pill pill-pop" data-act="contactAthlete" data-id="${a.id}">Contact for sponsorship</button>` : ''}</div>
-      <div class="pitch-chart rv d2"><div class="eyebrow">Audience · last 12 weeks</div>${spark(a.growth && a.growth.length > 2 ? a.growth : [0, 0], 600, 110, '#C6FF3D')}
+      <div class="pitch-chart rv d2"><div class="eyebrow">Audience · last 12 weeks</div>${spark(a.growth && a.growth.length > 2 ? a.growth : [0, 0], 600, 110, '#7FB5FF')}
         <div class="row"><div class="prof-stat" style="text-align:left"><b style="font-size:30px">${fmtK(followers(a))}</b><span>Audience</span></div><div class="prof-stat"><b style="font-size:30px">${g ? '+' + g.toFixed(0) + '%' : '—'}</b><span>Growth</span></div><div class="prof-stat" style="text-align:right"><b style="font-size:30px">${a.engagement ? a.engagement.toFixed(1) + '%' : '—'}</b><span>Engagement</span></div></div></div>
     </div></section>`;
   }
@@ -948,6 +1079,8 @@
     home() {
       setPart(ui.part);
       renderLiked(); renderLb(false); renderGoals(); renderSport(false); renderRaces(); renderFeed(); renderMarquee(); renderCmpTiles();
+      videoOn = null;
+      wireCd3d();
       scrubs.push(heroScrub, lnavScrub);
     },
     rigs: renderRigGrid,
@@ -1473,7 +1606,7 @@
 
   function paintMe() {
     const b = $('#meBtn');
-    b.innerHTML = claimed() ? av(meAthlete(), 32) : `<span class="av" style="--s:32px;--h:95" title="Claim your profile">✦</span>`;
+    b.innerHTML = claimed() ? av(meAthlete(), 32) : `<span class="av" style="--s:32px;--h:212" title="Claim your profile">✦</span>`;
     b.setAttribute('aria-label', claimed() ? 'Your profile' : 'Claim your profile');
   }
   $('#meBtn').addEventListener('click', () => claimed() ? go('#/athlete/me') : openEditor());
@@ -1488,5 +1621,7 @@
   /* ---------------------------------------------------------------- boot */
   paintMe();
   route();
+  // the wordmark flips once on load, then again whenever you hover it
+  setTimeout(() => { const l = $('#logo'); if (l) l.classList.remove('spin'); }, 1700);
   try { if (!localStorage.getItem(SEEN_KEY)) { localStorage.setItem(SEEN_KEY, '1'); setTimeout(() => { if (!stack.length) toast(`Welcome to <b>${BRAND}</b> ✦ scroll to explore`); }, 1200); } } catch (e) { /* ignore */ }
 })();

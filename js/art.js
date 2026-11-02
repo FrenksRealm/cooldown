@@ -10,7 +10,7 @@
   'use strict';
 
   const INK = '#111114';
-  const POP = '#C6FF3D';
+  const POP = '#2E7BFF';
 
   /* ---------- shared bike geometry ---------- */
   const R = [78, 122], F = [204, 122], BB = [134, 124], S = [121, 68], H = [186, 64], HB = [190, 82];
