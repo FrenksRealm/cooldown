@@ -48,7 +48,8 @@
     if (o.susp) frame += `<rect x="124" y="84" width="22" height="9" rx="4.5" transform="rotate(-28 135 88)" class="accent"/>`;
     if (o.bags) frame += `<path class="accent" d="M126 74L178 70L140 112Z"/>`;
     let cockpit = P(lineD(H, [194, 56]), 3.6);
-    if (o.bar === 'flat') cockpit += P(lineD([184, 54], [208, 52]), 4);
+    if (o.bar === 'bmx') cockpit = P(lineD(H, [192, 50]), 3.6) + P('M182 52L188 30M202 52L196 30M184 40h16', 3.4) + P(lineD([180, 30], [204, 30]), 4.2) + P(lineD([150, 128], [160, 128]), 5) + P(lineD([70, 128], [84, 128]), 5);
+    else if (o.bar === 'flat') cockpit += P(lineD([184, 54], [208, 52]), 4);
     else if (o.bar === 'aero') cockpit += P(lineD([192, 56], [226, 54]), 3.6);
     else cockpit += P('M194 56h10q10 0 10 10q0 9 -8 11', 3.6);
     let drive = `<circle cx="${BB[0]}" cy="${BB[1]}" r="10" class="accent"/>`;
@@ -62,7 +63,8 @@
     bags: { tire: 5.4, knobs: true, bags: true },
     track: { tire: 3, deep: true, disc: true, bar: 'drop' },
     tt: { tire: 3, deep: true, disc: true, bar: 'aero' },
-    mtb: { tire: 7, knobs: true, susp: true, bar: 'flat', r: 41 }
+    mtb: { tire: 7, knobs: true, susp: true, bar: 'flat', r: 41 },
+    bmx: { tire: 7, bar: 'bmx', r: 34 }
   };
 
   /** Big, scroll-drawable bike for the hero and the product viewer. */
@@ -86,6 +88,7 @@
     track: () => cardBike(BIKE_OPTS.track),
     tt: () => cardBike(BIKE_OPTS.tt),
     mtb: () => cardBike(BIKE_OPTS.mtb),
+    bmx: () => cardBike(BIKE_OPTS.bmx),
     shoe: () => `
       <g transform="translate(20 6)">
       <path d="M40 112C44 84 58 70 76 66L98 62C108 60 112 52 118 50L130 52C136 66 148 76 170 82C196 88 214 96 220 112L222 124L40 124Z" fill="#fff" stroke-width="3.4" stroke-linejoin="round"/>
