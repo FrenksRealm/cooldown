@@ -1,5 +1,5 @@
 /* =========================================================================
-   COOLDOWN avatars: a build-your-own vinyl-toy athlete for every sport.
+   COOLDOWN avatars: a build-your-own vinyl-toy rider for every cycling discipline.
 
    CD_AVATAR.svg(cfg)        full body, as an SVG string
    CD_AVATAR.head(cfg, px)   just the head, for small round avatars
@@ -19,19 +19,19 @@
   const LENS = { violet: ['#ff4fd8', '#5b2bff'], ocean: ['#7fe0ff', '#1a4dff'], gold: ['#ffe27a', '#ff7a1a'], smoke: ['#5d6474', '#0d0f14'], clear: ['#e9f4ff', '#a9c4e6'] };
 
   const LABEL = {
-    none: 'None', road: 'Road helmet', aero: 'Aero helmet', cap: 'Cycling cap', runcap: 'Running cap', visor: 'Visor', headband: 'Headband',
-    skihelmet: 'Ski helmet', beanie: 'Beanie', backcap: 'Backwards cap', swimcap: 'Swim cap', climbhelmet: 'Climbing helmet',
-    wrap: 'Wraparound shades', round: 'Round shades', goggles: 'Snow goggles', swimgoggles: 'Swim goggles',
+    none: 'None', road: 'Road helmet', aero: 'Aero helmet', cap: 'Cycling cap', visor: 'Visor', headband: 'Headband',
+    beanie: 'Beanie', backcap: 'Backwards cap',
+    wrap: 'Wraparound shades', round: 'Round shades', goggles: 'Goggles',
     jersey: 'Jersey', singlet: 'Singlet', tank: 'Tank', tee: 'Tee', jacket: 'Jacket', hoodie: 'Hoodie', trisuit: 'Skinsuit', longsleeve: 'Long-sleeve jersey', apron: 'Shop apron',
-    bibs: 'Bib shorts', shorts: 'Shorts', tights: 'Tights', pants: 'Riding pants', baggy: 'Baggy pants', climbpants: 'Pants', jeans: 'Jeans', mtbshorts: 'Baggy shorts',
+    bibs: 'Bib shorts', shorts: 'Shorts', tights: 'Tights', pants: 'Riding pants', baggy: 'Baggy pants', jeans: 'Jeans', mtbshorts: 'Baggy shorts',
     mtbhelmet: 'Trail helmet', kneepads: 'Knee pads', mud: 'Mud splatter', wrench: 'Wrench',
     solid: 'Solid', stripes: 'Stripes', sash: 'Sash', hoops: 'Hoops', dots: 'Dots', split: 'Split',
     buzz: 'Buzz', short: 'Short', curly: 'Curly', bun: 'Bun', ponytail: 'Ponytail', long: 'Long', bald: 'Bald',
     smile: 'Smile', grin: 'Grin', focus: 'Locked in',
     stubble: 'Stubble', beard: 'Beard', mustache: 'Mustache',
     down: 'Relaxed', thumbs: 'Thumbs up', flex: 'Flex',
-    bottle: 'Bidon', poles: 'Ski poles', board: 'Snowboard', kettlebell: 'Kettlebell', rope: 'Rope', medal: 'Finisher medal',
-    gloves: 'Gloves', bib: 'Race number', belt: 'Lifting belt', harness: 'Harness + chalk bag', watch: 'Sport watch'
+    bottle: 'Bidon', medal: 'Finisher medal',
+    gloves: 'Gloves', bib: 'Race number', watch: 'Sport watch'
   };
 
   // what each riding discipline can wear and hold ("Shop" is the mechanic's outfit)
@@ -134,11 +134,9 @@
     // props held in the left hand
     if (side === 'L' && a.pose !== 'flex') {
       if (a.prop === 'bottle') s += `<g transform="translate(-1 50)"><rect x="-7" y="-26" width="14" height="30" rx="5" fill="${a.topColor2}" stroke="${shade(a.topColor2, -0.35)}" stroke-width="1.5"/><rect x="-3.5" y="-31" width="7" height="6" rx="2" fill="#15161a"/><rect x="-4" y="-20" width="2.5" height="18" rx="1.2" fill="#fff" opacity=".45"/></g>`;
-      if (a.prop === 'kettlebell') s += `<g transform="translate(0 52)"><path d="M-7 4 a7 7 0 1 1 14 0" fill="none" stroke="#2b2e36" stroke-width="4"/><circle cx="0" cy="17" r="13" fill="#2b2e36"/><ellipse cx="-4" cy="12" rx="4" ry="3" fill="#fff" opacity=".25"/><text x="0" y="21" text-anchor="middle" font-size="9" font-weight="800" fill="#d7ff3a" font-family="sans-serif">24</text></g>`;
       if (a.prop === 'wrench') s += `<g transform="translate(0 50) rotate(20)"><rect x="-3" y="-4" width="6" height="34" rx="3" fill="#c9ced8" stroke="#7d8594" stroke-width="1.4"/><path d="M-8 30 a8 8 0 1 0 16 0 l-4 0 l0 5 l-8 0 l0 -5 Z" fill="#c9ced8" stroke="#7d8594" stroke-width="1.4"/><rect x="-1" y="0" width="2" height="22" fill="#fff" opacity=".6"/></g>`;
       if (a.prop === 'medal') s += `<g transform="translate(0 50)"><path d="M-5 0 L-2 16 M5 0 L2 16" stroke="${a.topColor}" stroke-width="3"/><circle cx="0" cy="22" r="8" fill="#ffd84d" stroke="#c99a1c" stroke-width="1.6"/><circle cx="-2.5" cy="19.5" r="2.2" fill="#fff" opacity=".6"/></g>`;
     }
-    if (a.prop === 'poles') s += `<line x1="0" y1="${side === 'L' ? 40 : 40}" x2="0" y2="118" stroke="#9aa1b2" stroke-width="3" stroke-linecap="round" transform="rotate(${side === 'L' ? -14 : 14} 0 50)"/><circle cx="0" cy="112" r="5" fill="none" stroke="#15161a" stroke-width="2" transform="rotate(${side === 'L' ? -14 : 14} 0 50)"/>`;
     return s + '</g></g>';
   }
 
@@ -188,7 +186,6 @@
     if (a.eyes === 'wrap') return g + `<path d="M58 90 C60 82 74 80 100 80 C126 80 140 82 142 90 L140 104 C138 110 124 112 114 108 C108 106 104 102 100 102 C96 102 92 106 86 108 C76 112 62 110 60 104 Z" fill="url(#${id}ln)" stroke="#15161a" stroke-width="3.2"/><path d="M70 86 L84 86" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".7"/><path d="M58 91 L50 92 M142 91 L150 92" stroke="#15161a" stroke-width="3.5"/>`;
     if (a.eyes === 'round') return g + `<circle cx="82" cy="96" r="11" fill="url(#${id}ln)" stroke="#15161a" stroke-width="2.6" opacity=".95"/><circle cx="118" cy="96" r="11" fill="url(#${id}ln)" stroke="#15161a" stroke-width="2.6" opacity=".95"/><path d="M93 95 Q100 91 107 95" stroke="#15161a" stroke-width="2.4" fill="none"/><path d="M76 91 l5 -2 M112 91 l5 -2" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".7"/>`;
     if (a.eyes === 'goggles') return g + `<path d="M50 84 L150 84" stroke="${a.headColor}" stroke-width="9"/><rect x="58" y="78" width="84" height="34" rx="16" fill="url(#${id}ln)" stroke="${shade(a.headColor, -0.4)}" stroke-width="4"/><path d="M68 86 Q84 82 96 86" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round" opacity=".75"/>`;
-    if (a.eyes === 'swimgoggles') return g + `<path d="M52 94 L148 94" stroke="#15161a" stroke-width="3"/><ellipse cx="82" cy="96" rx="10" ry="8" fill="url(#${id}ln)" stroke="#15161a" stroke-width="2.4"/><ellipse cx="118" cy="96" rx="10" ry="8" fill="url(#${id}ln)" stroke="#15161a" stroke-width="2.4"/>`;
     return '';
   }
   function headwear(a, id) {
@@ -198,13 +195,10 @@
       case 'mtbhelmet': return `<path d="M46 88 C44 46 72 26 100 26 C128 26 156 46 154 88 C150 80 140 76 128 74 L72 74 C60 76 50 80 46 88 Z" fill="${c}" stroke="${c2}" stroke-width="2"/><g fill="#15161a" opacity=".8"><path d="M86 34 L82 54 L90 54 L93 32 Z"/><path d="M114 34 L118 54 L110 54 L107 32 Z"/></g><path d="M56 70 Q100 54 144 70 L150 80 Q100 66 50 80 Z" fill="${c2}" stroke="${shade(c, -0.45)}" stroke-width="1.6"/><path d="M66 40 Q84 30 100 30" stroke="${c3}" stroke-width="4" fill="none" stroke-linecap="round" opacity=".8"/><path d="M52 88 L60 120 M148 88 L140 120" stroke="#15161a" stroke-width="2.4"/>`;
       case 'aero': return `<path d="M44 88 C40 48 70 26 104 26 C140 26 170 56 176 84 C150 80 124 76 96 74 C76 74 56 78 44 88 Z" fill="${c}" stroke="${c2}" stroke-width="2"/><path d="M64 44 Q90 30 116 32" stroke="${c3}" stroke-width="5" fill="none" stroke-linecap="round" opacity=".8"/><path d="M52 88 L60 120 M148 86 L140 120" stroke="#15161a" stroke-width="2.4"/>`;
       case 'cap': return `<path d="M52 74 C54 46 76 34 100 34 C124 34 146 46 148 74 Z" fill="${c}" stroke="${c2}" stroke-width="2"/><path d="M52 72 Q100 66 148 72 L148 76 Q100 70 52 76 Z" fill="${a.topColor2}"/><path d="M70 74 Q100 64 130 74 L128 84 Q100 76 72 84 Z" fill="${c2}"/><path d="M96 34 L104 34 L104 72 L96 72 Z" fill="${a.topColor2}" opacity=".9"/>`;
-      case 'runcap': return `<path d="M50 74 C52 44 76 32 100 32 C124 32 148 44 150 74 Z" fill="${c}" stroke="${c2}" stroke-width="2"/><path d="M58 74 Q100 64 142 74 Q148 84 134 84 Q100 78 66 84 Q52 84 58 74 Z" fill="${c2}"/><circle cx="100" cy="33" r="3.5" fill="${c2}"/>`;
       case 'backcap': return `<path d="M50 74 C52 44 76 32 100 32 C124 32 148 44 150 74 Z" fill="${c}" stroke="${c2}" stroke-width="2"/><path d="M128 52 Q160 50 168 60 Q160 66 140 64 Z" fill="${c2}"/><rect x="86" y="62" width="28" height="9" rx="4" fill="${c2}"/>`;
       case 'visor': return `<path d="M50 76 Q100 62 150 76 L150 84 Q100 70 50 84 Z" fill="${c}" stroke="${c2}" stroke-width="2"/><path d="M62 82 Q100 70 138 82 Q144 92 130 92 Q100 84 70 92 Q56 92 62 82 Z" fill="${c2}"/>`;
       case 'headband': return `<path d="M50 74 Q100 58 150 74 L150 86 Q100 70 50 86 Z" fill="${c}" stroke="${c2}" stroke-width="2"/><path d="M60 76 Q100 64 140 76" stroke="#fff" stroke-width="2" fill="none" opacity=".6"/>`;
-      case 'skihelmet': case 'climbhelmet': return `<path d="M44 92 C40 46 70 26 100 26 C130 26 160 46 156 92 C150 82 136 76 118 74 L82 74 C64 76 50 82 44 92 Z" fill="${c}" stroke="${c2}" stroke-width="2"/><path d="M64 42 Q84 30 104 30" stroke="${c3}" stroke-width="6" fill="none" stroke-linecap="round" opacity=".75"/>${a.head === 'climbhelmet' ? `<rect x="90" y="74" width="20" height="8" rx="3" fill="#15161a"/><circle cx="100" cy="78" r="3" fill="#fff"/>` : ''}<path d="M50 92 L58 124 M150 92 L142 124" stroke="#15161a" stroke-width="2.4"/>`;
       case 'beanie': return `<path d="M50 82 C48 44 74 28 100 28 C126 28 152 44 150 82 Z" fill="${c}" stroke="${c2}" stroke-width="2"/><rect x="48" y="70" width="104" height="16" rx="8" fill="${c2}"/><g stroke="${c2}" stroke-width="2" opacity=".5">${[66, 80, 94, 108, 122, 136].map((x) => `<path d="M${x} 40 L${x} 70"/>`).join('')}</g><circle cx="100" cy="24" r="10" fill="${a.topColor2}" stroke="${shade(a.topColor2, -0.3)}" stroke-width="1.6"/>`;
-      case 'swimcap': return `<path d="M50 84 C48 44 74 28 100 28 C126 28 152 44 150 84 C140 76 124 72 100 72 C76 72 60 76 50 84 Z" fill="${c}" stroke="${c2}" stroke-width="2"/><path d="M66 44 Q84 34 104 34" stroke="${c3}" stroke-width="5" fill="none" stroke-linecap="round" opacity=".7"/>`;
       default: return '';
     }
   }
@@ -238,7 +232,7 @@
   function bottoms(a) {
     const c = a.bottom === 'trisuit' ? a.topColor : a.bottomColor, cd = shade(c, -0.3);
     if (a.bottom === 'mtbshorts') return `<path d="M64 198 L136 198 L134 236 L104 236 L100 216 L96 236 L66 236 Z" fill="${c}" stroke="${cd}" stroke-width="2"/><path d="M70 226 L94 226 M106 226 L130 226" stroke="${cd}" stroke-width="2"/>`;
-    if (a.bottom === 'pants' || a.bottom === 'baggy' || a.bottom === 'climbpants' || a.bottom === 'tights' || a.bottom === 'jeans') {
+    if (a.bottom === 'pants' || a.bottom === 'baggy' || a.bottom === 'tights' || a.bottom === 'jeans') {
       const w = a.bottom === 'baggy' ? 6 : a.bottom === 'pants' ? 3 : a.bottom === 'tights' ? -1 : 1;
       const end = a.bottom === 'tights' ? 244 : 248;
       return `<path d="M${66 - w} 198 L${134 + w} 198 L${130 + w} ${end} L${104 - w * 0.2} ${end} L100 216 L${96 + w * 0.2} ${end} L${70 - w} ${end} Z" fill="${c}" stroke="${cd}" stroke-width="2"/>${a.bottom === 'pants' || a.bottom === 'baggy' ? `<path d="M${74 - w} 222 L${92} 222 M108 222 L${126 + w} 222" stroke="${cd}" stroke-width="2"/>` : ''}`;
@@ -249,10 +243,8 @@
   function legs(a) {
     const sk = a.skin, sk2 = shade(sk, -0.25);
     const sock = a.socks, sh = a.shoes, shd = shade(sh, -0.35);
-    const lowTop = a.sport === 'Skiing' || a.sport === 'Snowboard';
     let s = `<rect x="75" y="214" width="18" height="38" rx="7" fill="${sk}" stroke="${sk2}" stroke-width="1.6"/><rect x="107" y="214" width="18" height="38" rx="7" fill="${sk}" stroke="${sk2}" stroke-width="1.6"/>`;
-    if (!lowTop) s += `<rect x="75" y="234" width="18" height="16" rx="3" fill="${sock}" stroke="${shade(sock, -0.25)}" stroke-width="1.4"/><rect x="107" y="234" width="18" height="16" rx="3" fill="${sock}" stroke="${shade(sock, -0.25)}" stroke-width="1.4"/>`;
-    if (lowTop) s += `<path d="M70 236 L96 236 L98 258 L68 258 Z M104 236 L130 236 L132 258 L102 258 Z" fill="${sh}" stroke="${shd}" stroke-width="2"/><path d="M70 246 L96 246 M104 246 L130 246" stroke="${shd}" stroke-width="2"/>`;
+    s += `<rect x="75" y="234" width="18" height="16" rx="3" fill="${sock}" stroke="${shade(sock, -0.25)}" stroke-width="1.4"/><rect x="107" y="234" width="18" height="16" rx="3" fill="${sock}" stroke="${shade(sock, -0.25)}" stroke-width="1.4"/>`;
     s += `<path d="M66 252 Q66 244 78 244 L92 244 Q98 244 98 252 L98 258 Q82 262 66 258 Z" fill="${sh}" stroke="${shd}" stroke-width="2"/><path d="M102 252 Q102 244 108 244 L122 244 Q134 244 134 252 L134 258 Q118 262 102 258 Z" fill="${sh}" stroke="${shd}" stroke-width="2"/>`;
     s += `<path d="M70 250 L94 250 M106 250 L130 250" stroke="#fff" stroke-width="2" opacity=".5"/>`;
     return s;
@@ -262,13 +254,9 @@
     if (a.extras.includes('kneepads')) s += `<rect x="73" y="232" width="22" height="13" rx="5" fill="#15161a" stroke="#000" stroke-width="1"/><rect x="105" y="232" width="22" height="13" rx="5" fill="#15161a" stroke="#000" stroke-width="1"/><path d="M77 236 h14 M109 236 h14" stroke="${a.topColor}" stroke-width="2"/>`;
     if (a.extras.includes('mud')) s += `<g fill="#6b4a2b" opacity=".85">${[[80, 244, 3], [88, 250, 2.4], [112, 247, 3.2], [120, 240, 2], [72, 254, 3.6], [126, 255, 3], [96, 254, 2], [108, 230, 2.2], [84, 226, 2.6], [70, 205, 2.4], [128, 212, 2]].map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}"/>`).join('')}</g>`;
     if (a.extras.includes('bib')) s += `<rect x="84" y="160" width="32" height="24" rx="3" fill="#fff" stroke="#c9ced8" stroke-width="1.4"/><text x="100" y="178" text-anchor="middle" font-family="'Bricolage', sans-serif" font-weight="900" font-size="15" fill="#15161a">${a.number}</text><circle cx="87" cy="163" r="1.4" fill="#9aa1b2"/><circle cx="113" cy="163" r="1.4" fill="#9aa1b2"/>`;
-    if (a.extras.includes('belt')) s += `<rect x="64" y="186" width="72" height="16" rx="3" fill="#2a1a12" stroke="#120a06" stroke-width="1.6"/><rect x="92" y="184" width="16" height="20" rx="2" fill="none" stroke="#c9ced8" stroke-width="3"/>`;
-    if (a.extras.includes('harness')) s += `<path d="M66 200 L134 200 M82 200 L92 222 M118 200 L108 222" stroke="${a.topColor2}" stroke-width="5" stroke-linecap="round" fill="none"/><circle cx="100" cy="204" r="4" fill="none" stroke="#c9ced8" stroke-width="2.5"/><path d="M128 196 L142 196 L144 216 Q135 222 126 216 Z" fill="${a.topColor2}" stroke="${shade(a.topColor2, -0.35)}" stroke-width="1.6"/><path d="M128 196 Q135 200 142 196" stroke="#fff" stroke-width="2" fill="none"/>`;
     return s;
   }
   function propBack(a) {
-    if (a.prop === 'board') return `<g transform="rotate(-8 100 160)"><rect x="132" y="60" width="34" height="196" rx="17" fill="${a.topColor2}" stroke="${shade(a.topColor2, -0.35)}" stroke-width="2.4"/><rect x="140" y="80" width="6" height="150" rx="3" fill="#fff" opacity=".35"/><path d="M134 120 L164 120 M134 196 L164 196" stroke="#15161a" stroke-width="5"/></g>`;
-    if (a.prop === 'rope') return `<g fill="none" stroke="${a.topColor2}" stroke-width="5" transform="rotate(-35 100 170)"><ellipse cx="100" cy="170" rx="44" ry="20"/><ellipse cx="100" cy="170" rx="38" ry="15"/></g>`;
     return '';
   }
 
@@ -298,7 +286,7 @@
     s += `<circle cx="52" cy="96" r="9" fill="${sk}" stroke="${sk2}" stroke-width="1.6"/><circle cx="148" cy="96" r="9" fill="${sk}" stroke="${sk2}" stroke-width="1.6"/>`;
     s += `<circle cx="100" cy="86" r="50" fill="${sk}" stroke="${sk2}" stroke-width="2"/><circle cx="100" cy="86" r="50" fill="url(#${id}hg)"/>`;
     s += facialHair(a) + face(a);
-    const hides = ['road', 'aero', 'mtbhelmet', 'skihelmet', 'climbhelmet', 'swimcap', 'beanie'].includes(a.head);
+    const hides = ['road', 'aero', 'mtbhelmet', 'beanie'].includes(a.head);
     if (!hides) s += hairFront(a);
     s += eyewear(a, id) + headwear(a, id);
     s += `</g></g></svg>`;

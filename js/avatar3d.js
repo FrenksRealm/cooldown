@@ -110,7 +110,7 @@ const HEAD_Y = 2.25;
 
 function buildHair(a) {
   const g = new THREE.Group(), m = vinyl(a.hairColor, { rough: 0.5, coat: 0.6 });
-  const hidden = ['road', 'aero', 'mtbhelmet', 'skihelmet', 'climbhelmet', 'swimcap', 'beanie'].includes(a.head);
+  const hidden = ['road', 'aero', 'mtbhelmet', 'beanie'].includes(a.head);
   const capHair = (t, s) => { const c = mesh(G.cap(t), m, [0, HEAD_Y + 0.02, -0.02], [s, s * 0.98, s]); c.rotation.x = -0.25; return c; };
   if (a.hair === 'long') g.add(mesh(G.capsule(0.62, 0.9), m, [0, HEAD_Y - 0.7, -0.45], [1.35, 1, 0.55]));
   if (a.hair === 'ponytail') g.add(mesh(G.capsule(0.2, 0.7), m, [0, HEAD_Y - 0.25, -1.05], null, [0.5, 0, 0]));
@@ -135,7 +135,7 @@ function buildHeadwear(a) {
     g.add(shell(1.3, 1.14, 1.06, 1.15, -0.05));
     g.add(mesh(G.capsule(0.55, 0.9), m, [0, HEAD_Y + 0.35, -1.0], [1.2, 0.8, 1], [Math.PI / 2 - 0.35, 0, 0]));
     straps();
-  } else if (a.head === 'cap' || a.head === 'runcap') {
+  } else if (a.head === 'cap') {
     g.add(shell(1.15, 1.06, 1.0, 1.06));
     g.add(mesh(G.cyl(0.62, 0.62, 0.05), vinyl(darker(c, 0.2)), [0, HEAD_Y + 0.48, 0.95], [1, 1, 0.75], [0.35, 0, 0]));
     g.add(mesh(G.box(0.16, 0.6, 0.05), vinyl(a.topColor2), [0, HEAD_Y + 0.85, 0.55], null, [-0.6, 0, 0]));
@@ -170,7 +170,7 @@ function buildEyewear(a) {
     const rim = new THREE.Mesh(rimG, a.eyes === 'goggles' ? vinyl(a.headColor) : frame); rim.position.copy(band.position); rim.scale.set(1.02, 1, 1.02);
     rim.material = rim.material.clone(); rim.material.side = THREE.BackSide; g.add(rim);
     if (a.eyes === 'goggles') g.add(mesh(G.torus(1.03, 0.07), vinyl(a.headColor), [0, HEAD_Y - 0.02, 0], null, [Math.PI / 2, 0, 0]));
-  } else if (a.eyes === 'round' || a.eyes === 'swimgoggles') {
+  } else if (a.eyes === 'round') {
     [-1, 1].forEach((s) => {
       g.add(mesh(G.torus(0.22, 0.04), frame, [s * 0.36, HEAD_Y, 0.95], null, [0, s * 0.3, 0]));
       g.add(mesh(G.cyl(0.21, 0.21, 0.02), lensMat(a), [s * 0.36, HEAD_Y, 0.95], null, [Math.PI / 2, 0, -s * 0.3]));
@@ -249,11 +249,10 @@ function buildBody(a, parts) {
   const g = new THREE.Group();
   const sk = skinMat(a.skin);
   // legs
-  const lowTop = a.sport === 'Skiing' || a.sport === 'Snowboard';
   [-1, 1].forEach((s) => {
     const leg = new THREE.Group(); leg.position.set(s * 0.27, -0.25, 0);
     leg.add(limb(0.2, 0.55, sk));
-    if (!lowTop) leg.add(mesh(G.cyl(0.215, 0.215, 0.3), vinyl(a.socks, { rough: 0.6, coat: 0.2 }), [0, -0.78, 0]));
+    leg.add(mesh(G.cyl(0.215, 0.215, 0.3), vinyl(a.socks, { rough: 0.6, coat: 0.2 }), [0, -0.78, 0]));
     leg.add(mesh(G.capsule(0.24, 0.32), vinyl(a.shoes), [0, -1.0, 0.12], [1, 0.75, 1], [Math.PI / 2, 0, 0]));
     leg.add(mesh(G.box(0.4, 0.06, 0.62), vinyl(darker(a.shoes, 0.35)), [0, -1.16, 0.12]));
     if (a.extras.includes('kneepads')) leg.add(mesh(G.sphere, vinyl('#15161a', { rough: 0.5 }), [0, -0.5, 0.12], [0.24, 0.2, 0.16]));
@@ -261,7 +260,7 @@ function buildBody(a, parts) {
   });
   // bottoms
   const bc = a.bottom === 'trisuit' ? a.topColor : a.bottomColor, bm = vinyl(bc, { rough: 0.45, coat: 0.5 });
-  const long = ['pants', 'baggy', 'climbpants', 'tights', 'jeans'].includes(a.bottom);
+  const long = ['pants', 'baggy', 'tights', 'jeans'].includes(a.bottom);
   const len = long ? 0.95 : a.bottom === 'mtbshorts' ? 0.55 : 0.36;
   const wide = a.bottom === 'baggy' || a.bottom === 'mtbshorts' ? 0.27 : a.bottom === 'jeans' || a.bottom === 'pants' ? 0.245 : 0.225;
   g.add(mesh(G.capsule(0.6, 0.1), bm, [0, -0.08, 0], [1, 0.75, 0.8]));
@@ -272,8 +271,6 @@ function buildBody(a, parts) {
   torso.rotation.y = -Math.PI / 2; // puts the middle of the artwork on the front
   g.add(torso);
   if (a.top === 'hoodie') g.add(mesh(G.torus(0.42, 0.14), vinyl(darker(a.topColor, 0.15)), [0, 1.22, -0.25], null, [Math.PI / 2 + 0.4, 0, 0]));
-  if (a.extras.includes('belt')) g.add(mesh(G.cyl(0.66, 0.66, 0.2, true), vinyl('#2a1a12'), [0, 0.12, 0], [1, 1, 0.82]));
-  if (a.extras.includes('harness')) g.add(mesh(G.torus(0.6, 0.05), vinyl(a.topColor2), [0, 0.0, 0], [1, 0.82, 1], [Math.PI / 2, 0, 0]));
   if (a.prop === 'medal') { g.add(mesh(G.torus(0.5, 0.03, Math.PI), vinyl(a.topColor2), [0, 1.0, 0.42], [0.8, 1, 1], [0, 0, Math.PI])); g.add(mesh(G.cyl(0.14, 0.14, 0.04), vinyl('#ffd84d', { metal: 0.8, rough: 0.2 }), [0, 0.55, 0.52], null, [Math.PI / 2, 0, 0])); }
   if (a.extras.includes('mud')) { const mud = vinyl('#6b4a2b', { rough: 0.8, coat: 0.2 }); [[0.3, -0.75, 0.2], [-0.25, -0.6, 0.2], [0.2, -0.95, 0.24], [-0.3, -1.0, 0.22], [0.05, 0.2, 0.5], [-0.35, 0.4, 0.45], [0.38, -0.3, 0.22]].forEach(([x, y, z]) => g.add(mesh(G.sphere, mud, [x, y, z], [0.06, 0.05, 0.03]))); }
   // neck
@@ -281,8 +278,6 @@ function buildBody(a, parts) {
   // arms
   g.add(buildArm('L', a, parts));
   g.add(buildArm('R', a, parts));
-  // board / poles behind (legacy kits)
-  if (a.prop === 'board') g.add(mesh(G.capsule(0.32, 2.4), vinyl(a.topColor2), [0.8, 0.6, -0.55], [1, 1, 0.18], [0, 0, -0.15]));
   return g;
 }
 

@@ -96,31 +96,6 @@
       <path d="M96 66l12 14M108 62l12 14M120 60l12 14" stroke-width="2.6" stroke-linecap="round"/>
       <path d="M60 102C100 96 150 98 210 108" stroke-width="2" stroke-dasharray="4 4"/>
       </g>`,
-    ski: () => `
-      <g transform="rotate(-24 140 90)">
-        <rect x="20" y="70" width="240" height="14" rx="7" fill="#fff" stroke-width="3"/>
-        <rect x="26" y="96" width="240" height="14" rx="7" class="accent" stroke-width="3"/>
-        <rect x="118" y="62" width="38" height="12" rx="3" class="ink"/>
-        <rect x="124" y="88" width="38" height="12" rx="3" class="ink"/>
-      </g>
-      <path d="M58 30L96 160M80 26L112 160" stroke-width="3" stroke-linecap="round"/>
-      <circle cx="91" cy="144" r="7" stroke-width="2"/><circle cx="108" cy="146" r="7" stroke-width="2"/>`,
-    board: () => `
-      <g transform="rotate(-18 140 90)">
-        <rect x="30" y="66" width="220" height="48" rx="24" fill="#fff" stroke-width="3.4"/>
-        <path d="M40 90H240" stroke-width="2" stroke-dasharray="6 5"/>
-        <rect x="92" y="72" width="22" height="36" rx="6" class="accent" stroke-width="2.6"/>
-        <rect x="166" y="72" width="22" height="36" rx="6" class="accent" stroke-width="2.6"/>
-      </g>`,
-    barbell: () => `
-      <path d="M20 96H260" stroke-width="5" stroke-linecap="round"/>
-      <rect x="44" y="46" width="16" height="100" rx="4" class="accent" stroke-width="3"/>
-      <rect x="62" y="56" width="12" height="80" rx="3" fill="#fff" stroke-width="3"/>
-      <rect x="76" y="66" width="8" height="60" rx="2" class="ink"/>
-      <rect x="220" y="46" width="16" height="100" rx="4" class="accent" stroke-width="3"/>
-      <rect x="206" y="56" width="12" height="80" rx="3" fill="#fff" stroke-width="3"/>
-      <rect x="196" y="66" width="8" height="60" rx="2" class="ink"/>
-      <path d="M118 150h44l-6 -14h-32z" fill="#fff" stroke-width="2.6" stroke-linejoin="round"/>`,
     stand: () => `
       <g stroke-width="1.2" stroke-opacity=".3">${Array.from({ length: 7 }, (_, i) => `<path d="M20 ${20 + i * 12}H260"/>`).join('')}</g>
       <g class="ink">${Array.from({ length: 30 }, (_, i) => `<circle cx="${28 + (i % 15) * 16}" cy="${32 + Math.floor(i / 15) * 36}" r="1.6"/>`).join('')}</g>
@@ -135,23 +110,6 @@
       <polyline points="80,84 98,70 112,76 130,58 146,66 160,52" stroke-width="2.6" stroke-linejoin="round"/>
       <rect x="182" y="72" width="44" height="26" rx="3" class="accent" stroke-width="2.6"/>
       <rect x="40" y="148" width="70" height="14" rx="7" class="accent" stroke-width="2.6"/>`,
-    rack: () => `
-      <path d="M70 20V160M210 20V160" stroke-width="7"/>
-      <path d="M64 24H216" stroke-width="5"/>
-      <path d="M40 78H240" stroke-width="4" stroke-linecap="round"/>
-      <rect x="44" y="56" width="12" height="44" rx="3" class="accent" stroke-width="2.6"/>
-      <rect x="224" y="56" width="12" height="44" rx="3" class="accent" stroke-width="2.6"/>
-      <rect x="30" y="160" width="220" height="8" rx="3" class="ink"/>`,
-    climb: () => `
-      <g transform="rotate(-18 104 96)">
-        <rect x="80" y="38" width="48" height="116" rx="24" fill="#fff" stroke-width="6"/>
-        <path d="M128 70V112" stroke-width="7" class="gate"/>
-        <rect x="120" y="70" width="16" height="42" rx="6" class="accent" stroke-width="2.6"/>
-      </g>
-      <circle cx="196" cy="104" r="48" stroke-width="5"/>
-      <circle cx="196" cy="104" r="38" stroke-width="5" stroke-dasharray="10 6"/>
-      <circle cx="196" cy="104" r="28" stroke-width="5"/>
-      <path d="M150 140C170 160 210 168 250 150" stroke-width="5" stroke-linecap="round"/>`,
     wheelwall: () => {
       let s = '';
       for (let r = 0; r < 2; r++) for (let c = 0; c < 4; c++) {

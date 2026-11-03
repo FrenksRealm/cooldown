@@ -51,7 +51,7 @@
         id: 'a3', name: 'Ines Okafor', handle: 'ines.sprints', sport: 'Track', city: 'Atlanta, GA', hue: 330,
         bio: 'Track sprinter. Flying 200s, loud music, louder starts.',
         followers: 63800, engagement: 8.3, growth: [52, 53, 54, 55.5, 56, 57.4, 58.8, 60, 61, 62.2, 63, 63.8],
-        openToSponsors: true, sponsors: ['Iron Orchard Gym'],
+        openToSponsors: true, sponsors: ['Iron Orchard Training'],
         pitch: 'Sprint and strength content with a community that shows up: 8%+ engagement, consistent comments, real conversions.',
         socials: { instagram: 'ines.sprints', tiktok: 'inessprints', spotify: 'https://open.spotify.com' },
         goals: [
@@ -144,7 +144,7 @@
         id: 'a11', name: 'Ava Brooks', handle: 'ava.velo', sport: 'Track', city: 'Chicago, IL', hue: 300,
         bio: 'Track endurance racer and coach. Lives at the velodrome.',
         followers: 41200, engagement: 6.6, growth: [37, 37.4, 37.9, 38.3, 38.8, 39.2, 39.6, 40, 40.4, 40.7, 41, 41.2],
-        openToSponsors: false, sponsors: ['Chalkline Apparel'],
+        openToSponsors: false, sponsors: ['Chainline Apparel'],
         pitch: '',
         socials: { instagram: 'ava.velo', youtube: 'https://www.youtube.com' },
         goals: [
@@ -314,7 +314,7 @@
         pinned: [
           { kind: 'video', src: V + 'cycling-track-pack.mp4', title: 'Thursday night track league' },
           { kind: 'photo', src: P + 'street.jpg', title: 'Downtown loop, no brakes' },
-          { kind: 'video', src: V + 'cycling-wheel-spin.mp4', title: 'Fresh 49×15' }
+          { kind: 'video', src: V + 'cycling-race-city.mp4', title: 'Downtown crit, full gas' }
         ],
         results: [
           { event: 'Brooklyn Night Crit', date: inDays(-12), place: 2, field: 88, cat: 'Fixed Men', time: '41:05' },
@@ -333,7 +333,7 @@
       },
       a3: {
         avatar: { sport: 'Track', skin: '#7a4a2a', hair: 'bun', hairColor: '#14110f', face: 'focus', head: 'aero', headColor: '#15161a', eyes: 'wrap', lens: 'violet', top: 'trisuit', topColor: '#ff4fa3', topColor2: '#15161a', pattern: 'split', bottom: 'trisuit', shoes: '#f4f5f7', socks: '#f4f5f7', extras: ['gloves'], prop: 'medal', pose: 'flex' },
-        pinned: [{ kind: 'video', src: V + 'cycling-track-start.mp4', title: 'Standing start practice' }, { kind: 'photo', src: P + 'track-pack.jpg', title: 'Tuesday night track league' }, { kind: 'photo', src: P + 'wheel-spin.jpg', title: 'New disc day' }],
+        pinned: [{ kind: 'video', src: V + 'cycling-track-start.mp4', title: 'Standing start practice' }, { kind: 'photo', src: P + 'track-pack.jpg', title: 'Tuesday night track league' }, { kind: 'video', src: V + 'cycling-race-velodrome.mp4', title: 'Velodrome night' }],
         results: [
           { event: 'Georgia Track Championships', date: inDays(-60), place: 1, field: 18, cat: 'Women Sprint', time: '11.42 s flying 200' },
           { event: 'Southeast Sprint Omnium', date: inDays(-150), place: 2, field: 24, cat: 'Women Elite', time: '—' }
@@ -347,7 +347,7 @@
           { name: 'Southeast Sprint Omnium', why: 'Where 11-flat started to feel close.', status: 'done', year: 2026 },
           { name: 'Six Days of Ghent', why: 'One day, as a fan with a beer.', status: 'bucket' }
         ],
-        sponsorsDetail: [{ name: 'Iron Orchard Gym', kind: 'Strength partner', since: 2024 }]
+        sponsorsDetail: [{ name: 'Iron Orchard Training', kind: 'Strength partner', since: 2024 }]
       },
       a4: {
         avatar: { sport: 'MTB', skin: '#f6c9a3', hair: 'long', hairColor: '#e3c27a', face: 'grin', head: 'mtbhelmet', headColor: '#ff7a1a', eyes: 'goggles', lens: 'gold', top: 'longsleeve', topColor: '#2e6ff2', topColor2: '#ff7a1a', pattern: 'hoops', bottom: 'mtbshorts', bottomColor: '#15161a', shoes: '#15161a', socks: '#ff7a1a', extras: ['gloves', 'kneepads'], prop: 'none', pose: 'thumbs' },
@@ -370,7 +370,7 @@
       a8: {
         avatar: { sport: 'Shop', skin: '#b97c4f', hair: 'curly', hairColor: '#14110f', face: 'grin', facial: 'stubble', head: 'backcap', headColor: '#15161a', eyes: 'round', lens: 'clear', top: 'apron', topColor: '#f4f5f7', topColor2: '#3b2416', bottom: 'jeans', bottomColor: '#2e4a7a', shoes: '#15161a', extras: ['gloves', 'watch'], prop: 'wrench', pose: 'thumbs' },
         mech: { shop: 'Ibarra Wheelworks', specialties: ['Wheel builds', 'Hydraulic brakes', 'Electronic shifting', 'Restorations'], certs: ['UBI Professional Repair', 'Wheel building, advanced'], built: 186, turnaround: '3–5 days', since: 2014 },
-        pinned: [{ kind: 'photo', src: P + 'wheel-spin.jpg', title: 'Fresh build, ready for pickup' }, { kind: 'photo', src: P + 'clip-in.jpg', title: 'Drivetrain deep clean' }, { kind: 'video', src: V + 'cycling-wheel-spin.mp4', title: 'Dialed. Zero hop, zero wobble.' }],
+        pinned: [{ kind: 'video', src: V + 'cycling-mechanic-wheel.mp4', title: 'Fresh wheel build, ready for pickup' }, { kind: 'photo', src: P + 'clip-in.jpg', title: 'Drivetrain deep clean' }, { kind: 'video', src: V + 'cycling-mechanic-gloves.mp4', title: 'Dialed. Zero hop, zero wobble.' }],
         songs: [['Oye Como Va', 'Santana'], ['Superstition', 'Stevie Wonder'], ['Gasolina', 'Daddy Yankee'], ['Electric Feel', 'MGMT'], ['September', 'Earth, Wind & Fire']],
         topRaces: [{ name: 'Mechanic for a pro team at the Tour of California', why: 'The neutral support car dream.', status: 'bucket' }, { name: 'Wrenching at Unbound Gravel', why: '200 miles of flats and smiles.', status: 'done', year: 2025 }]
       },
@@ -406,7 +406,7 @@
       { id: 't4', name: 'Cascade Gravity', city: 'Bend, OR', disciplines: ['MTB'], colors: ['#ff7a1a', '#1f6b4a'], founded: 2020,
         bio: 'Enduro and downhill racers from the Cascades to the Wasatch.', sponsors: ['Ridgeback Tire Co.', 'Wasatch Suspension Co.'], members: ['a7', 'a4'] },
       { id: 't5', name: 'Velo Atlanta', city: 'Atlanta, GA', disciplines: ['Track', 'Road'], colors: ['#e5332a', '#f4f5f7'], founded: 2018,
-        bio: 'Sprinters, pursuiters and a very loud infield.', sponsors: ['Iron Orchard Gym'], members: ['a3'] }
+        bio: 'Sprinters, pursuiters and a very loud infield.', sponsors: ['Iron Orchard Training'], members: ['a3'] }
     ];
     teams.forEach((t) => t.members.forEach((id) => { const a = athletes.find((x) => x.id === id); if (a) a.team = t.id; }));
     // riders can ride more than one discipline; the first is their main one

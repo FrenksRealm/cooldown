@@ -22,7 +22,7 @@ window.COOLDOWN_CLIPS = [
   'cycling-mtb-stunt.mp4',
   'cycling-race-city.mp4',
   'cycling-bmx-festival-air.mp4',
-  'cycling-mechanic-workshop.mp4',
+  'cycling-mechanic-torque.mp4',
   'cycling-drone-singletrack.mp4',
   'cycling-riders-chatting.mp4',
   'cycling-bmx-tricks.mp4',
@@ -32,6 +32,6 @@ window.COOLDOWN_CLIPS = [
   'cycling-riders-cheers.mp4',
   'cycling-mtb-ramp.mp4',
   'cycling-race-velodrome.mp4',
-  'cycling-riders-handshake.mp4',
-  'cycling-wheel-spin.mp4',
+  
+  
 ];
